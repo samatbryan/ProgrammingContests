@@ -33,18 +33,18 @@ public class j {
     }
 
     static class Node {
-        double dist;
+        long dist;
         int node;
 
-        Node(double dist, int node) {
+        Node(long dist, int node) {
             this.dist = dist;
             this.node = node;
         }
     }
 
-    public double get_dist(long[] a, long[] b) {
-        double res = (a[0] - b[0]) * (a[0] - b[0]) + (a[1] - b[1]) * (a[1] - b[1]);
-        return Math.sqrt(res);
+    public long get_dist(long[] a, long[] b) {
+        long res = (a[0] - b[0]) * (a[0] - b[0]) + (a[1] - b[1]) * (a[1] - b[1]);
+        return res;
     }
 
     public void solve(InputReader in, PrintWriter w) {
@@ -57,24 +57,47 @@ public class j {
         int dst = n + 1;
         locs[n] = in.nextLongArray(2);
         locs[n + 1] = in.nextLongArray(2);
-        PriorityQueue<Node> pq = new PriorityQueue<Node>((a, b) -> (Double.compare(a.dist, b.dist)));
-        int[] parents = new int[n];
+        PriorityQueue<Node> pq = new PriorityQueue<Node>((a, b) -> (Long.compare(a.dist, b.dist)));
+        int[] parents = new int[n + 2];
         parents[src] = -1;
-
+        long[] dists = new long[n + 2];
+        Arrays.fill(dists, IMAX);
         pq.add(new Node(0l, src));
+        dists[src] = 0;
+
         HashSet<Integer> popped = new HashSet();
         while (pq.size() > 0) {
             Node cur = pq.poll();
             int cur_node = cur.node;
-            double cur_dist = cur.dist;
-
+            long cur_dist = cur.dist;
+            if (popped.contains(cur_node))
+                continue;
+            popped.add(cur_node);
             for (int neighbor = 0; neighbor <= n + 1; neighbor++) {
                 if (neighbor == cur_node || popped.contains(neighbor)) {
                     continue;
                 }
-                double time = get_dist(locs[cur_node], locs[neighbor]);
-                double weight = Math.log(time);
-                
+                long dist = get_dist(locs[cur_node], locs[neighbor]);
+                if (cur_dist + dist < dists[neighbor]) {
+                    dists[neighbor] = cur_dist + dist;
+                    pq.add(new Node(dists[neighbor], neighbor));
+                    parents[neighbor] = cur_node;
+                }
+            }
+        }
+        LinkedList<Integer> path = new LinkedList();
+        int cur = dst;
+        while (cur != -1) {
+            path.addFirst(cur);
+            cur = parents[cur];
+        }
+        if (path.size() == 2) {
+            w.println("-");
+        } else {
+            path.removeFirst();
+            path.removeLast();
+            for (int p : path) {
+                w.println(p);
             }
         }
     }

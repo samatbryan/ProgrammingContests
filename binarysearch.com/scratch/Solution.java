@@ -1,87 +1,61 @@
 import java.util.*;
 
 class Solution {
-    static class Dsu {
-        int n;
-        int[] parents;
+    static class Node {
+        int node;
+        long cost;
+        int bus;
 
-        Dsu(int n) {
-            this.parents = new int[n];
-            this.n = n;
-        }
-
-        void connect(int a, int b) {
-            this.a = get_parent(a);
-            this.b = get_parent(b);
-            parents[a] = b;
-        }
-
-        int get_parent(int a) {
-            if (parent[a] == a)
-                return a;
-            return parent[a] = get_parent(parent[a]);
-        }
-
-    }
-
-    static class Edge {
-        int u, v, weight;
-
-        Edge(int u, int v, int weight) {
-            this.u = u;
-            this.v = v;
-            this.weight = weight;
+        Node(int node, long cost, int bus) {
+            this.node = node;
+            this.cost = cost;
+            this.bus = bus;
         }
     }
 
-    public int solve(int[][] matrix) {
-        int[] dr = new int[] { 1, 0 };
-        int[] dc = new int[] { 0, 1 };
+    public int solve(int[][] connections) {
+        HashMap<Integer, ArrayList<Node>> graph = new HashMap();
+        int src = 0;
+        int dst = 0;
+        for (int[] c : connections) {
+            int s = c[0], t = c[1], b = c[2];
+            graph.putIfAbsent(s, new ArrayList());
+            graph.get(s).add(new Node(t, 0l, b));
+            dst = Math.max(s, dst);
+            dst = Math.max(t, dst);
+        }
 
-        ArrayList<Edge> edges = new ArrayList();
-        int m = matrix.length, n = matrix[0].length;
-        int left = 0;
-        int right = 0;
-        for (int i = 0; i < m; i++) {
-            for (int j = 0; j < n; j++) {
-                for (int neighbor = 0; neighbor < 2; neighbor++) {
-                    int new_i = i + dr[neighbor];
-                    int new_j = j + dc[neighbor];
+        PriorityQueue<Node> pq = new PriorityQueue<Node>((a, b) -> (Long.compare(a.cost, b.cost)));
+        pq.add(new Node(0, 0, -1));
+        HashMap<Integer, Long> dists = new HashMap();
+        dists.put(0, 0L);
+        HashSet<Integer> popped = new HashSet();
 
-                    if (new_i < m && new_j < n) {
-                        int u = new_i * m + new_j;
-                        int v = i * m + j;
-                        int w = Math.abs(matrix[i][j] - matrix[new_i][new_j]);
-                        edges.add(new Edge(u, v, w));
-                        right = Math.max(w, right);
-                    }
+        while (pq.size() > 0) {
+            Node cur_node = pq.poll();
+            int cur = cur_node.node;
+            long cost = cur_node.cost;
+            int bus = cur_node.bus;
+            if (popped.contains(cur))
+                continue;
+            popped.add(cur);
+
+            for (Node neighbor_node : graph.getOrDefault(cur, new ArrayList<Node>())) {
+                int neighbor = neighbor_node.node;
+                int next_bus = neighbor_node.bus;
+                if (popped.contains(neighbor))
+                    continue;
+
+                long prev_dist = dists.getOrDefault(neighbor, (long) Integer.MAX_VALUE);
+                long edge_cost = next_bus == bus ? 0 : 1;
+                if (edge_cost + cost < prev_dist) {
+                    dists.put(neighbor, edge_cost + cost);
+                    pq.add(new Node(neighbor, edge_cost + cost, next_bus));
                 }
             }
         }
-        Collections.sort(edges, (a, b) -> (a.weight - b.weight));
-        int res = right;
-        while (left <= right) {
-            int mid = left + (right - left) / 2;
 
-            Dsu dsu = new dsu(m * n);
-            for (Edge e : edges) {
-                int u = e.u, v = e.v, weight = e.weight;
-                if (weight > mid)
-                    break;
-                dsu.connect(u, v);
-            }
-            if (dsu.get_parent(0) == dsu.get_parent((m - 1) * (n - 1))) {
-                res = Math.min(res, m);
-                r = mid - 1;
-            } else {
-                l = mid + 1;
-            }
-        }
-
-        return res;
-    }
-
-    public int hash(int x, int y, int m) {
-        return x * m + y;
+        long res = dists.get(dst);
+        return (int) res;
     }
 }

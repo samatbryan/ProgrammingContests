@@ -1,0 +1,226 @@
+import java.io.*;
+import java.util.*;
+
+public class c {
+    final int IMAX = Integer.MAX_VALUE;
+    final int IMIN = Integer.MIN_VALUE;
+    final long LMAX = Long.MAX_VALUE;
+    final long LMIN = Long.MIN_VALUE;
+
+    public static void main(String[] args) {
+        InputReader in = new InputReader(System.in);
+        PrintWriter w = new PrintWriter(System.out);
+        int T = 1;
+
+        c ok = new c();
+
+        for (int i = 0; i < T; i++)
+            ok.solve(in, w);
+        w.close();
+    }
+
+    public void solve(InputReader in, PrintWriter w) {
+        int n = in.ii();
+        int m = in.ii();
+        ArrayList<Integer>[] graph = new ArrayList[n + 1];
+        for (int i = 1; i <= n; i++) {
+            graph[i] = new ArrayList();
+        }
+        for (int i = 0; i < m; i++) {
+            int u = in.ii();
+            int v = in.ii();
+            graph[u].add(v);
+            graph[v].add(u);
+        }
+        LinkedList<Integer> q = new LinkedList();
+        boolean[] visited = new boolean[n + 1];
+
+        q.addLast(1);
+        int dist = 0;
+        while (q.size() > 0) {
+            dist++;
+            int size = q.size();
+            for (int i = 0; i < size; i++) {
+                int cur = q.removeFirst();
+                if (cur == n) {
+                    w.println(Math.max(0, dist - 2));
+                    return;
+                }
+                for (int neighbor : graph[cur]) {
+                    if (!visited[neighbor]) {
+                        q.addLast(neighbor);
+                        visited[neighbor] = true;
+                    }
+                }
+            }
+        }
+        w.println(Math.max(0, dist - 2));
+    }
+
+    public static class InputReader {
+
+        private final InputStream stream;
+        private final byte[] buf = new byte[8192];
+        private int curChar, snumChars;
+        private SpaceCharFilter filter;
+
+        public InputReader(InputStream stream) {
+            this.stream = stream;
+        }
+
+        public int snext() {
+            if (snumChars == -1)
+                throw new InputMismatchException();
+            if (curChar >= snumChars) {
+                curChar = 0;
+                try {
+                    snumChars = stream.read(buf);
+                } catch (IOException e) {
+                    throw new InputMismatchException();
+                }
+                if (snumChars <= 0)
+                    return -1;
+            }
+            return buf[curChar++];
+        }
+
+        public int ii() {
+            int c = snext();
+            while (isSpaceChar(c)) {
+                c = snext();
+            }
+            int sgn = 1;
+            if (c == '-') {
+                sgn = -1;
+                c = snext();
+            }
+            int res = 0;
+            do {
+                if (c < '0' || c > '9')
+                    throw new InputMismatchException();
+                res *= 10;
+                res += c - '0';
+                c = snext();
+            } while (!isSpaceChar(c));
+            return res * sgn;
+        }
+
+        public long ll() {
+            int c = snext();
+            while (isSpaceChar(c)) {
+                c = snext();
+            }
+            int sgn = 1;
+            if (c == '-') {
+                sgn = -1;
+                c = snext();
+            }
+            long res = 0;
+            do {
+                if (c < '0' || c > '9')
+                    throw new InputMismatchException();
+                res *= 10;
+                res += c - '0';
+                c = snext();
+            } while (!isSpaceChar(c));
+            return res * sgn;
+        }
+
+        public double nextDouble() {
+            return Double.parseDouble(readString());
+        }
+
+        public int[] nextIntArray(int n) {
+            int a[] = new int[n];
+            for (int i = 0; i < n; i++) {
+                a[i] = ii();
+            }
+            return a;
+        }
+
+        public long[] nextLongArray(int n) {
+            long a[] = new long[n];
+            for (int i = 0; i < n; i++) {
+                a[i] = ll();
+            }
+            return a;
+        }
+
+        public String readString() {
+            int c = snext();
+            while (isSpaceChar(c)) {
+                c = snext();
+            }
+            StringBuilder res = new StringBuilder();
+            do {
+                res.appendCodePoint(c);
+                c = snext();
+            } while (!isSpaceChar(c));
+            return res.toString();
+        }
+
+        public String nextLine() {
+            int c = snext();
+            while (isSpaceChar(c))
+                c = snext();
+            StringBuilder res = new StringBuilder();
+            do {
+                res.appendCodePoint(c);
+                c = snext();
+            } while (!isEndOfLine(c));
+            return res.toString();
+        }
+
+        public boolean isSpaceChar(int c) {
+            if (filter != null)
+                return filter.isSpaceChar(c);
+            return c == ' ' || c == '\n' || c == '\r' || c == '\t' || c == -1;
+        }
+
+        private boolean isEndOfLine(int c) {
+            return c == '\n' || c == '\r' || c == -1;
+        }
+
+        public interface SpaceCharFilter {
+            public boolean isSpaceChar(int ch);
+        }
+    }
+
+    class Pair<S extends Comparable<S>, T extends Comparable<T>> implements Comparable<Pair<S, T>> {
+        S first;
+        T second;
+
+        Pair(S f, T s) {
+            first = f;
+            second = s;
+        }
+
+        @Override
+        public int compareTo(Pair<S, T> o) {
+            int t = first.compareTo(o.first);
+            if (t == 0)
+                return second.compareTo(o.second);
+            return t;
+        }
+
+        @Override
+        public int hashCode() {
+            return (31 + first.hashCode()) * 31 + second.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (!(o instanceof Pair))
+                return false;
+            if (o == this)
+                return true;
+            Pair p = (Pair) o;
+            return first.equals(p.first) && second.equals(p.second);
+        }
+
+        @Override
+        public String toString() {
+            return "Pair{" + first + ", " + second + "}";
+        }
+    }
+}

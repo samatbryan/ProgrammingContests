@@ -18,7 +18,9 @@ w.close();
 
 public class e {
     final int IMAX = Integer.MAX_VALUE;
-    final long LMAX = Long.MIN_VALUE;
+    final int IMIN = Integer.MIN_VALUE;
+    final long LMAX = Long.MAX_VALUE;
+    final long LMIN = Long.MIN_VALUE;
 
     public static void main(String[] args) {
         InputReader in = new InputReader(System.in);
@@ -33,7 +35,18 @@ public class e {
     }
 
     public void solve(InputReader in, PrintWriter w) {
-        return;
+        int n = in.ii();
+        ArrayList<Integer>[] graph = new ArrayList[n];
+
+        for (int i = 0; i < n; i++) {
+            graph[i] = new ArrayList();
+        }
+        for (int i = 0; i < n; i++) {
+            int u = in.ii();
+            int v = in.ii();
+            int p = in.ii();
+            
+        }
     }
 
     static class InputReader {

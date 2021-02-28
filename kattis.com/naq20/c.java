@@ -18,7 +18,9 @@ w.close();
 
 public class c {
     final int IMAX = Integer.MAX_VALUE;
-    final long LMAX = Long.MIN_VALUE;
+    final int IMIN = Integer.MIN_VALUE;
+    final long LMAX = Long.MAX_VALUE;
+    final long LMIN = Long.MIN_VALUE;
 
     public static void main(String[] args) {
         InputReader in = new InputReader(System.in);
@@ -32,8 +34,113 @@ public class c {
         w.close();
     }
 
+    public boolean ok(Pair<Integer, Integer> pos, String[] board) {
+        // down right diagonal
+        int r = pos.first + 1;
+        int c = pos.second + 1;
+        while (r < 8 && c < 8) {
+            if (board[r].charAt(c) == '*') {
+                return false;
+            }
+            r++;
+            c++;
+        }
+
+        // up left diagonal
+        r = pos.first - 1;
+        c = pos.second - 1;
+        while (r >= 0 && c >= 0) {
+            if (board[r].charAt(c) == '*') {
+                return false;
+            }
+            r--;
+            c--;
+        }
+
+        // up right diagonal
+        r = pos.first - 1;
+        c = pos.second + 1;
+        while (r >= 0 && c < 8) {
+            if (board[r].charAt(c) == '*') {
+                return false;
+            }
+            r--;
+            c++;
+        }
+
+        // down left diagonal
+        r = pos.first + 1;
+        c = pos.second - 1;
+        while (r < 8 && c >= 0) {
+            if (board[r].charAt(c) == '*') {
+                return false;
+            }
+            r++;
+            c--;
+        }
+        // up
+        r = pos.first - 1;
+        c = pos.second;
+
+        while (r >= 0) {
+            if (board[r].charAt(c) == '*') {
+                return false;
+            }
+            r--;
+        }
+        // down
+        r = pos.first + 1;
+        c = pos.second;
+        while (r < 8) {
+            if (board[r].charAt(c) == '*') {
+                return false;
+            }
+            r++;
+        }
+
+        // right
+        r = pos.first;
+        c = pos.second + 1;
+
+        while (c < 8) {
+            if (board[r].charAt(c) == '*') {
+                return false;
+            }
+            c++;
+        }
+        // left
+        r = pos.first;
+        c = pos.second - 1;
+        while (c >= 0) {
+            if (board[r].charAt(c) == '*') {
+                return false;
+            }
+            c--;
+        }
+        return true;
+    }
+
     public void solve(InputReader in, PrintWriter w) {
-        return;
+        String[] board = new String[8];
+        for (int i = 0; i < 8; i++) {
+            board[i] = in.nextLine();
+        }
+        ArrayList<Pair<Integer, Integer>> queens = new ArrayList();
+        for (int r = 0; r < 8; r++) {
+            String s = board[r];
+            for (int c = 0; c < 8; c++) {
+                if (s.charAt(c) == '*') {
+                    queens.add(new Pair(r, c));
+                }
+            }
+        }
+        for (Pair<Integer, Integer> pos : queens) {
+            if (!ok(pos, board)) {
+                w.println("invalid");
+                return;
+            }
+        }
+        w.println("valid");
     }
 
     static class InputReader {

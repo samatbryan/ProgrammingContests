@@ -16,13 +16,13 @@ while (t-- > 0) {
 w.close();
 */
 
-public class b {
+public class c {
     public static void main(String[] args) {
         InputReader in = new InputReader(System.in);
         PrintWriter w = new PrintWriter(System.out);
         int T = 1;
 
-        b ok = new b();
+        c ok = new c();
 
         for (int i = 0; i < T; i++)
             ok.solve(in, w);

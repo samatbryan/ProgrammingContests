@@ -18,7 +18,9 @@ w.close();
 
 public class a {
     final int IMAX = Integer.MAX_VALUE;
-    final long LMAX = Long.MIN_VALUE;
+    final int IMIN = Integer.MIN_VALUE;
+    final long LMAX = Long.MAX_VALUE;
+    final long LMIN = Long.MIN_VALUE;
 
     public static void main(String[] args) {
         InputReader in = new InputReader(System.in);

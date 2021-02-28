@@ -23,6 +23,7 @@ public class d {
     final int BEFORE = 0;
     final int MIDDLE = 1;
     final int AFTER = 2;
+    Boolean[][][] dp;
 
     public static void main(String[] args) {
         InputReader in = new InputReader(System.in);
@@ -38,17 +39,17 @@ public class d {
     public void solve(InputReader in, PrintWriter w) {
         String s = in.nextLine();
         int n = s.length();
-        Boolean[][][] dp = new Boolean[n][3][n + 1];
+        dp = new Boolean[n][3][n + 1];
         if (s.length() % 2 == 1) {
             w.println("impossible");
-        } else if (f(s, dp, 0, BEFORE, 0))
+        } else if (f(s, 0, BEFORE, 0))
             w.println("possible");
         else {
             w.println("impossible");
         }
     }
 
-    public boolean f(String s, Boolean[][][] dp, int idx, int used, int left) {
+    public boolean f(String s, int idx, int used, int left) {
         int right = idx - left;
         boolean res = false;
         int n = s.length();
@@ -71,15 +72,15 @@ public class d {
 
         if (used == MIDDLE || used == BEFORE) {
             // 1. FLIP IT
-            res = res || f(s, dp, idx + 1, MIDDLE, next_flip_left);
+            res = res || f(s, idx + 1, MIDDLE, next_flip_left);
             if (res == true) {
                 return dp[idx][used][left] = res;
             }
             // 2. DONT FLIP IT
             int nxt_used = used == MIDDLE ? AFTER : BEFORE;
-            res = res || f(s, dp, idx + 1, nxt_used, next_left);
+            res = res || f(s, idx + 1, nxt_used, next_left);
         } else {
-            res = res || f(s, dp, idx + 1, AFTER, next_left);
+            res = res || f(s, idx + 1, AFTER, next_left);
         }
         return dp[idx][used][left] = res;
     }

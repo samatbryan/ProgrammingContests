@@ -18,7 +18,9 @@ w.close();
 
 public class g {
     final int IMAX = Integer.MAX_VALUE;
-    final long LMAX = Long.MIN_VALUE;
+    final int IMIN = Integer.MIN_VALUE;
+    final long LMAX = Long.MAX_VALUE;
+    final long LMIN = Long.MIN_VALUE;
 
     public static void main(String[] args) {
         InputReader in = new InputReader(System.in);
@@ -33,7 +35,53 @@ public class g {
     }
 
     public void solve(InputReader in, PrintWriter w) {
-        return;
+        int n = in.ii();
+        double k = in.nextDouble();
+        double[] houses = new double[n + 2];
+        for (int i = 1; i <= n; i++) {
+            houses[i] = in.nextDouble();
+        }
+        double err = 1e-7;
+        int iter = 0;
+        HashSet<Integer> visited = new HashSet();
+
+        LinkedList<Integer> q = new LinkedList();
+        double max = -1;
+
+        for (int i = 1; i <= n; i++) {
+            max = Math.max(max, houses[i]);
+            double avg = (houses[i - 1] + houses[i + 1]) / 2.0 + k;
+            if (houses[i] >= avg + err || houses[i] >= avg - err)
+                continue;
+            q.addLast(i);
+            visited.add(i);
+        }
+
+        while (q.size() > 0) {
+            int i = q.removeFirst();
+            visited.remove(i);
+            double avg = (houses[i - 1] + houses[i + 1]) / 2.0 + k;
+            max = Math.max(max, houses[i]);
+            if (houses[i] >= avg + err || houses[i] >= avg - err)
+                continue;
+            houses[i] = avg;
+            max = Math.max(max, avg);
+
+            if (i - 1 > 0 && !visited.contains(i - 1)) {
+                q.addLast(i - 1);
+                visited.add(i - 1);
+            }
+            if (i + 1 <= n && !visited.contains(i + 1)) {
+                q.addLast(i + 1);
+                visited.add(i + 1);
+            }
+        }
+        w.println();
+              
+        for(int i=1; i<=n; i++){
+            w.print(houses[i] + " " );
+        }
+        w.println(max);
     }
 
     static class InputReader {

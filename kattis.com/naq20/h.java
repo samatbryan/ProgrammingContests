@@ -18,7 +18,9 @@ w.close();
 
 public class h {
     final int IMAX = Integer.MAX_VALUE;
-    final long LMAX = Long.MIN_VALUE;
+    final int IMIN = Integer.MIN_VALUE;
+    final long LMAX = Long.MAX_VALUE;
+    final long LMIN = Long.MIN_VALUE;
 
     public static void main(String[] args) {
         InputReader in = new InputReader(System.in);
@@ -32,10 +34,71 @@ public class h {
         w.close();
     }
 
-    public void solve(InputReader in, PrintWriter w) {
-        return;
+    String code;
+    int[][] grid;
+    Integer[][][] dp;
+
+    public int f(int r, int c, int code_idx) {
+        int m = grid.length;
+        int n = grid[0].length;
+        if (r == 0 && c == grid[0].length - 1) {
+            return grid[r][c];
+        }
+        if (dp[r][c][code_idx] != null)
+            return dp[r][c][code_idx];
+        int res = Integer.MAX_VALUE;
+        // try step right
+        if (c + 1 < n) {
+            res = Math.min(res, f(r, c + 1, code_idx));
+        }
+        // try step up
+        if (r - 1 >= 0) {
+            res = Math.min(res, f(r - 1, c, code_idx));
+        }
+        if (code_idx < code.length()) {
+            int hop = (int) (code.charAt(code_idx) - '0');
+            // try hop right
+            if (c + hop + 1 < n) {
+                res = Math.min(res, f(r, c + hop + 1, code_idx + 1));
+            }
+            // try hop up
+            if (r - hop - 1 >= 0) {
+                res = Math.min(res, f(r - hop - 1, c, code_idx + 1));
+            }
+        }
+
+        return dp[r][c][code_idx] = (res + grid[r][c]);
+
     }
 
+    public void solve(InputReader in, PrintWriter w) {
+        int x = in.ii();
+        int y = in.ii();
+        grid = new int[y][x];
+        code = in.nextLine();
+        int start_r = y - 1;
+        int start_c = 0;
+
+        dp = new Integer[y + 1][x + 1][code.length() + 2];
+        for (int i = 0; i < y; i++) {
+            String s = in.nextLine();
+            for (int j = 0; j < x; j++) {
+                int c = (int) (s.charAt(j) - '0');
+                grid[i][j] = c;
+            }
+        }
+        w.println(f(y - 1, 0, 0));
+
+    }
+
+    /*
+     * IGNORE THESE ARE JUST INPUT READER CODE * IGNORE THESE ARE JUST INPUT READER
+     * CODE IGNORE THESE ARE JUST INPUT READER CODE IGNORE THESE ARE JUST INPUT
+     * READER CODE IGNORE THESE ARE JUST INPUT READER CODE * IGNORE THESE ARE JUST
+     * INPUT READER CODE IGNORE THESE ARE JUST INPUT READER CODE IGNORE THESE ARE
+     * JUST INPUT READER CODE IGNORE THESE ARE JUST INPUT READER CODE
+     * 
+     */
     static class InputReader {
 
         private final InputStream stream;

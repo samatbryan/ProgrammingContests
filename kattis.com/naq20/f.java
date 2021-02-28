@@ -18,7 +18,9 @@ w.close();
 
 public class f {
     final int IMAX = Integer.MAX_VALUE;
-    final long LMAX = Long.MIN_VALUE;
+    final int IMIN = Integer.MIN_VALUE;
+    final long LMAX = Long.MAX_VALUE;
+    final long LMIN = Long.MIN_VALUE;
 
     public static void main(String[] args) {
         InputReader in = new InputReader(System.in);
@@ -33,7 +35,14 @@ public class f {
     }
 
     public void solve(InputReader in, PrintWriter w) {
-        return;
+        int n = in.ii();
+        for (int i = 0; i < n; i++) {
+
+            String s = in.nextLine();
+            if (s.startsWith("Simon says")) {
+                w.println(s.substring(10, s.length()));
+            }
+        }
     }
 
     static class InputReader {
