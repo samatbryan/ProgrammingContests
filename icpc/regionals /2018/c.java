@@ -1,7 +1,7 @@
 import java.io.*;
 import java.util.*;
 
-public class a {
+public class c {
     final int IMAX = Integer.MAX_VALUE;
     final int IMIN = Integer.MIN_VALUE;
     final long LMAX = Long.MAX_VALUE;
@@ -12,7 +12,7 @@ public class a {
         PrintWriter w = new PrintWriter(System.out);
         int T = 1;
 
-        a ok = new a();
+        c ok = new c();
 
         for (int i = 0; i < T; i++)
             ok.solve(in, w);
@@ -20,21 +20,7 @@ public class a {
     }
 
     public void solve(InputReader in, PrintWriter w) {
-        int k = in.ii();
-        String me = in.nextLine();
-        String you = in.nextLine();
-        int same = 0;
-        for (int i = 0; i < me.length(); i++) {
-            if (me.charAt(i) == you.charAt(i)) {
-                same++;
-            }
-        }
-        int diff = me.length() - same;
-        int res = 0;
-        res += Math.min(same, k);
-        k -= Math.min(k, same);
-        res += diff - k;
-        w.println(res);
+
     }
 
     public static class InputReader {

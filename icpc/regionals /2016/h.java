@@ -1,7 +1,7 @@
 import java.io.*;
 import java.util.*;
 
-public class a {
+public class h {
     final int IMAX = Integer.MAX_VALUE;
     final int IMIN = Integer.MIN_VALUE;
     final long LMAX = Long.MAX_VALUE;
@@ -12,29 +12,53 @@ public class a {
         PrintWriter w = new PrintWriter(System.out);
         int T = 1;
 
-        a ok = new a();
+        h ok = new h();
 
         for (int i = 0; i < T; i++)
             ok.solve(in, w);
         w.close();
     }
 
-    public void solve(InputReader in, PrintWriter w) {
-        int k = in.ii();
-        String me = in.nextLine();
-        String you = in.nextLine();
-        int same = 0;
-        for (int i = 0; i < me.length(); i++) {
-            if (me.charAt(i) == you.charAt(i)) {
-                same++;
-            }
+    static class Fence implements Comparable<Fence> {
+        long left, right;
+
+        Fence(long left, long right) {
+            this.left = left;
+            this.right = right;
         }
-        int diff = me.length() - same;
-        int res = 0;
-        res += Math.min(same, k);
-        k -= Math.min(k, same);
-        res += diff - k;
-        w.println(res);
+
+        public int compareTo(Fence e) {
+            return Long.compare(left, e.left);
+        }
+    }
+
+    public void solve(InputReader in, PrintWriter w) {
+        long n = in.ll();
+        int k = in.ii();
+
+        Fence[] fences = new Fence[k];
+        for (int i = 0; i < k; i++)
+            fences[i] = new Fence(in.ll(), in.ll());
+        Arrays.sort(fences);
+
+        TreeMap<Long, Long> treedp = new TreeMap();
+        treedp.put(fences[k - 1].left, fences[k - 1].right - fences[k - 1].left + 1);
+        long res = fences[k - 1].right - fences[k - 1].left + 1;
+        for (int i = k - 2; i >= 0; i--) { // for each fence
+            Fence cur_fence = fences[i];
+            long cur_left = cur_fence.left;
+            long cur_right = cur_fence.right;
+            Long best_right_fence = treedp.ceilingKey(cur_right + 1);
+            long score = cur_right - cur_left + 1;
+            if (best_right_fence != null) {
+                score += treedp.get(best_right_fence);
+            }
+            res = Math.max(res, score);
+
+            treedp.put(cur_left, res);
+        }
+        w.println(n - res);
+        w.close();
     }
 
     public static class InputReader {

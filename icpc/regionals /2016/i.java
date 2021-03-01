@@ -1,7 +1,7 @@
 import java.io.*;
 import java.util.*;
 
-public class a {
+public class i {
     final int IMAX = Integer.MAX_VALUE;
     final int IMIN = Integer.MIN_VALUE;
     final long LMAX = Long.MAX_VALUE;
@@ -12,29 +12,82 @@ public class a {
         PrintWriter w = new PrintWriter(System.out);
         int T = 1;
 
-        a ok = new a();
+        i ok = new i();
 
         for (int i = 0; i < T; i++)
             ok.solve(in, w);
         w.close();
     }
 
+    static class House {
+        int pos;
+        int mail;
+
+        House(int pos, int mail) {
+            this.pos = pos;
+            this.mail = mail;
+        }
+    }
+
     public void solve(InputReader in, PrintWriter w) {
+        int n = in.ii();
         int k = in.ii();
-        String me = in.nextLine();
-        String you = in.nextLine();
-        int same = 0;
-        for (int i = 0; i < me.length(); i++) {
-            if (me.charAt(i) == you.charAt(i)) {
-                same++;
+        int[] x = new int[n];
+        int[] m = new int[n];
+        for (int i = 0; i < n; i++) {
+            x[i] = in.ii();
+            m[i] = in.ii();
+        }
+        ArrayList<House> pos_x = new ArrayList();
+        ArrayList<House> neg_x = new ArrayList();
+        for (int i = 0; i < n; i++) {
+            if (x[i] > 0) {
+                pos_x.add(new House(x[i], m[i]));
+            } else {
+                neg_x.add(new House(-1 * x[i], m[i]));
             }
         }
-        int diff = me.length() - same;
-        int res = 0;
-        res += Math.min(same, k);
-        k -= Math.min(k, same);
-        res += diff - k;
+        Collections.sort(pos_x, (a, b) -> (a.pos - b.pos));
+        Collections.sort(neg_x, (a, b) -> (a.pos - b.pos));
+        long res = 0;
+        long carry = 0;
+        for (int i = pos_x.size() - 1; i >= 0; i--) {
+            House h = pos_x.get(i);
+            long mail = h.mail;
+            long pos = h.pos;
+            long use = Math.min(carry, mail);
+            mail -= use;
+            carry -= use;
+            if (mail == 0)
+                continue;
+            long trips = mail / k;
+            if (mail % k != 0)
+                trips++;
+            carry += trips * k;
+            carry -= mail;
+
+            res += trips * 2 * pos;
+        }
+        carry = 0;
+        for (int i = neg_x.size() - 1; i >= 0; i--) {
+            House h = neg_x.get(i);
+            long mail = h.mail;
+            long pos = h.pos;
+            long use = Math.min(carry, mail);
+            mail -= use;
+            carry -= use;
+            if (mail == 0)
+                continue;
+            long trips = mail / k;
+            if (mail % k != 0)
+                trips++;
+            carry += trips * k;
+            carry -= mail;
+            res += trips * 2 * Math.abs(pos);
+
+        }
         w.println(res);
+
     }
 
     public static class InputReader {

@@ -1,4 +1,5 @@
 # from collections import defaultdict
+
 import sys
 from functools import lru_cache
 import io
@@ -20,10 +21,23 @@ def rrm(): return list(map(int, input().split()))
 INF = float('inf')
 
 
-def solve():
-    pass
+n, k = rrm()
+nums = rrm()
+
+mod = 998244353
+nums.sort()
+last = dict()
+for i in range(len(nums)):
+    last[nums[i]] = i
 
 
-t = rri()
-for _ in range(t):
-    print(solve())
+@lru_cache(None)
+def f(i, chosen):
+    if i == len(nums):
+        return 1 if chosen == k else 0
+    res = f(last[nums[i]] + 1, chosen + 1)
+    res = (res + f(i+1, chosen)) % mod
+    return res
+
+
+print(f(0, 0))
